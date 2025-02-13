@@ -1,28 +1,99 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Pengukuran Jarak dengan HC-SR04</title>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Pengukuran Jarak | HC-SR04</title>
     <script>
       // Fungsi untuk mengambil data jarak dari endpoint API
       function fetchDistance() {
-         fetch('/api/distance')
-           .then(response => response.json())
-           .then(data => {
-              document.getElementById('distance').innerText = data.distance + " cm";
-           })
-           .catch(error => console.error('Error fetching distance:', error));
+        fetch("/api/distance")
+          .then((response) => response.json())
+          .then((data) => {
+            document.getElementById("distance").innerText =
+              data.distance + " cm";
+          })
+          .catch((error) => console.error("Error fetching distance:", error));
       }
-      
+
       // Setiap 100ms, jalankan fungsi fetchDistance
-      window.onload = function() {
-         fetchDistance(); // panggil pertama kali saat halaman dimuat
-         setInterval(fetchDistance, 100); // update setiap 100ms
+      window.onload = function () {
+        fetchDistance(); // panggil pertama kali saat halaman dimuat
+        setInterval(fetchDistance, 100); // update setiap 100ms
+      };
+      let isDataReceived = false;
+
+      function fetchDistance() {
+        fetch("/api/distance")
+          .then((response) => response.json())
+          .then((data) => {
+            document.getElementById("distance").innerText =
+              data.distance + " cm";
+            isDataReceived = true; // Data diterima, reset status
+          })
+          .catch((error) => console.error("Error fetching distance:", error));
       }
+
+      window.onload = function () {
+        fetchDistance(); // Panggil pertama kali
+        setInterval(fetchDistance, 100); // Update setiap 100ms
+
+        // Timer 7 detik untuk cek apakah data diterima
+        setTimeout(() => {
+          if (!isDataReceived) {
+            document.getElementById("distance").innerText =
+              "Pastikan sensor terhubung!";
+            document.getElementById("distance").style.color = "red"; // Biar lebih jelas
+          }
+        }, 7000);
+      };
     </script>
-</head>
-<body>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        color: white;
+        text-align: center;
+        padding: 50px;
+      }
+
+      h1 {
+        font-size: 2rem;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+      }
+
+      p {
+        font-size: 1.5rem;
+        background: rgba(255, 255, 255, 0.2);
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      strong#distance {
+        font-size: 2rem;
+        font-weight: bold;
+        display: block;
+        margin-top: 10px;
+        color: #ffeb3b;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        animation: pulse 1s infinite alternate;
+      }
+
+      @keyframes pulse {
+        from {
+          transform: scale(1);
+          opacity: 1;
+        }
+        to {
+          transform: scale(1.1);
+          opacity: 0.8;
+        }
+      }
+    </style>
+  </head>
+  <body>
     <h1>Pengukuran Jarak</h1>
     <p>Jarak saat ini: <strong id="distance">Loading...</strong></p>
-</body>
+  </body>
 </html>
