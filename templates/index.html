@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Pengukuran Jarak dengan HC-SR04</title>
+    <script>
+      // Fungsi untuk mengambil data jarak dari endpoint API
+      function fetchDistance() {
+         fetch('/api/distance')
+           .then(response => response.json())
+           .then(data => {
+              document.getElementById('distance').innerText = data.distance + " cm";
+           })
+           .catch(error => console.error('Error fetching distance:', error));
+      }
+      
+      // Setiap 100ms, jalankan fungsi fetchDistance
+      window.onload = function() {
+         fetchDistance(); // panggil pertama kali saat halaman dimuat
+         setInterval(fetchDistance, 100); // update setiap 100ms
+      }
+    </script>
+</head>
+<body>
+    <h1>Pengukuran Jarak</h1>
+    <p>Jarak saat ini: <strong id="distance">Loading...</strong></p>
+</body>
+</html>
